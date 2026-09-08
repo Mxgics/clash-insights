@@ -1,0 +1,18 @@
+name: Bug report
+description: Report a reproducible Clash Insights problem
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Reproduction and evidence
+      description: Do not include API keys or private player data.
+    validations:
+      required: true

@@ -1,0 +1,22 @@
+<aside>
+  <a class="brand" href="/" aria-label="Clash Insights home"
+    ><span class="crest">CI</span><span>CLASH<span class="brand-light">INSIGHTS</span></span></a
+  >
+  <p class="nav-label">YOUR COMMAND CENTRE</p>
+  <nav aria-label="Dashboard sections">
+    @for (item of sections; track item) {
+      <button
+        [class.active]="section() === item"
+        [attr.aria-current]="section() === item ? 'page' : null"
+        (click)="section.set(item)"
+      >
+        <span class="nav-dot" aria-hidden="true"></span>{{ item }}
+      </button>
+    }
+  </nav>
+  <div class="local-card">
+    <span class="status-dot"></span> Local workspace
+    <p>V1 · On this computer</p>
+    <small>Hosting & accounts planned for v2</small>
+  </div>
+</aside>

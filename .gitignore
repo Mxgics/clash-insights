@@ -1,0 +1,12 @@
+**/bin/
+**/obj/
+**/node_modules/
+**/.angular/
+**/dist/
+**/wwwroot/
+.env
+**/appsettings.Local.json
+backups/
+work/
+**/test-results/
+**/playwright-report/

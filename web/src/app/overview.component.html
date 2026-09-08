@@ -1,0 +1,249 @@
+<a class="skip" href="#main">Skip to dashboard</a>
+<div class="shell">
+  <app-workspace-nav [(section)]="section" />
+  <main id="main">
+    <header>
+      <div class="breadcrumb">WORKSPACE <span>/</span> {{ section() }}</div>
+      <button class="refresh" (click)="service.refresh()" [disabled]="service.data.isLoading()">
+        {{ service.data.isLoading() ? 'Loading…' : 'Refresh view' }}
+      </button>
+    </header>
+    @if (service.data.error()) {
+      <div class="error" role="alert">
+        <h1>Unable to load your dashboard</h1>
+        <p>Check that the local API and PostgreSQL are running, then refresh the view.</p>
+      </div>
+    } @else if (data(); as d) {
+      <div class="page-heading">
+        <div>
+          <p class="eyebrow">YOUR VILLAGE. THE BIGGER PICTURE.</p>
+          <h1>
+            {{
+              section() === 'Overview'
+                ? 'Every upgrade tells a story.'
+                : section() === 'Players'
+                  ? 'Player progression'
+                  : section() === 'Clan'
+                    ? 'Stronger, together.'
+                    : section() === 'Wars'
+                      ? 'The war room'
+                      : 'Collection health'
+            }}
+          </h1>
+          <p class="subtitle">
+            {{
+              section() === 'Overview'
+                ? 'Follow your accounts, understand your clan, and see progress over time.'
+                : 'Observed data from your configured tracking list.'
+            }}
+          </p>
+        </div>
+        <span class="version">LOCAL V1</span>
+      </div>
+      <div class="notice" [class.live]="d.mode === 'Live'">
+        <strong>{{ d.mode === 'Demo' ? 'DEMO DATA' : 'LIVE MODE' }}</strong
+        ><span>{{
+          d.mode === 'Demo'
+            ? 'Synthetic players, clan and war. No Supercell API requests are made.'
+            : 'Only collected observations are shown. Gaps while the app is stopped cannot be reconstructed.'
+        }}</span>
+      </div>
+      @if (section() === 'Overview') {
+        <section class="metrics" aria-label="Workspace summary">
+          <article>
+            <span>TRACKED PLAYERS</span><strong>{{ d.players.length }}</strong
+            ><small>Accounts with observations</small>
+          </article>
+          <article>
+            <span>CLANS IN VIEW</span><strong>{{ d.clans.length }}</strong
+            ><small>Your configured community</small>
+          </article>
+          <article>
+            <span>PLAYER DONATIONS</span
+            ><strong>{{
+              totalDonations() === null ? 'Unavailable' : (totalDonations() | number)
+            }}</strong
+            ><small>Latest counters · not lifetime totals</small>
+          </article>
+          <article>
+            <span>HISTORY RETENTION</span><strong>{{ d.retentionDays }}<em>days</em></strong
+            ><small>Detailed local snapshots</small>
+          </article>
+        </section>
+      }
+      @if (section() === 'Overview' || section() === 'Players') {
+        <div class="two-column">
+          <app-history-chart [player]="player()" [intervalMinutes]="d.intervalMinutes" />
+          <section class="panel accounts">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">YOUR ACCOUNTS</p>
+                <h2>Players to watch</h2>
+              </div>
+              <span class="count">{{ d.players.length }}</span>
+            </div>
+            @for (p of d.players; track p.tag) {
+              <button
+                class="player"
+                (click)="selectPlayer(p)"
+                [attr.aria-label]="'View ' + p.name + ' progression'"
+              >
+                <span class="avatar">{{ p.name.slice(0, 1) }}</span
+                ><span class="player-name"
+                  ><strong>{{ p.name }}</strong
+                  ><small>TH {{ p.townHall ?? 'Unavailable' }} · {{ p.tag }}</small></span
+                ><span class="score"
+                  >{{ p.trophies === null ? 'Unavailable' : (p.trophies | number)
+                  }}<small [class.warning]="stale(p.observedAt)">{{
+                    stale(p.observedAt) ? 'Stale observation' : 'Trophies'
+                  }}</small></span
+                >
+              </button>
+            } @empty {
+              <p class="empty">Your tracked players will appear here.</p>
+            }
+          </section>
+        </div>
+      }
+      @if (section() === 'Overview' || section() === 'Clan') {
+        @for (c of d.clans; track c.tag) {
+          <section class="panel clan">
+            <div class="panel-heading">
+              <div class="clan-title">
+                <span class="clan-crest">{{ c.level ?? 'Unavailable' }}</span>
+                <div>
+                  <p class="eyebrow">CLAN · {{ c.tag }}</p>
+                  <h2>{{ c.name }}</h2>
+                </div>
+              </div>
+              <div class="clan-meta">
+                <strong>{{
+                  c.rosterAvailable ? c.members.length + ' members' : 'Roster unavailable'
+                }}</strong
+                ><span
+                  >{{ c.points === null ? 'Unavailable' : (c.points | number) }} clan points</span
+                >
+              </div>
+            </div>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Member</th>
+                    <th>Role</th>
+                    <th>Trophies</th>
+                    <th>Donations</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (m of c.members; track m.tag) {
+                    <tr>
+                      <td>
+                        <strong>{{ m.name }}</strong
+                        ><small class="tag">{{ m.tag }}</small>
+                      </td>
+                      <td>{{ m.role }}</td>
+                      <td>{{ m.trophies === null ? 'Unavailable' : (m.trophies | number) }}</td>
+                      <td>{{ m.donations === null ? 'Unavailable' : (m.donations | number) }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+            <div class="roster-note">
+              @if (!c.rosterAvailable) {
+                Roster unavailable in the latest response.
+              }
+              Since the previous snapshot:
+              {{ c.joined.length ? c.joined.join(', ') + ' joined' : 'no joins observed' }} ·
+              {{ c.left.length ? c.left.join(', ') + ' left' : 'no departures observed' }}. Observed
+              {{ c.observedAt | date: 'd MMM, HH:mm' }}.
+            </div>
+          </section>
+        } @empty {
+          <section class="panel">
+            <h2>No clan observations yet</h2>
+            <p class="empty">
+              Add clan tags to local configuration to collect the roster and current war.
+            </p>
+          </section>
+        }
+      }
+      @if (section() === 'Wars') {
+        @for (w of d.wars; track w.tag) {
+          <section class="panel war">
+            <p class="eyebrow">{{ w.tag }} · {{ w.state }}</p>
+            <h2>
+              {{ w.opponent === 'Unavailable' ? 'No opponent available' : 'Against ' + w.opponent }}
+            </h2>
+            @if (w.state !== 'notInWar' && w.opponent !== 'Unavailable') {
+              <div class="war-score">
+                {{ w.stars ?? 'Unavailable' }} <span>—</span> {{ w.opponentStars ?? 'Unavailable' }}
+              </div>
+              <p>
+                Stars · {{ w.attacks ?? 'Unavailable' }} attacks recorded ·
+                {{ w.teamSize ?? 'Unavailable' }} players per side
+              </p>
+            }
+            <p class="subtitle">
+              Observed {{ w.observedAt | date: 'd MMM, HH:mm' }}. Private or unavailable wars may
+              not be collected.
+            </p>
+          </section>
+        } @empty {
+          <section class="panel">
+            <h2>No war data available</h2>
+            <p>War observations appear after a successful collection for a configured clan.</p>
+          </section>
+        }
+      }
+      @if (section() === 'Collection') {
+        <section class="panel">
+          <p class="eyebrow">COLLECTOR</p>
+          <h2>{{ d.collectorStatus }}</h2>
+          <p>
+            Configured interval: {{ d.intervalMinutes }} minutes. Retention:
+            {{ d.retentionDays }} days.
+          </p>
+          <p>
+            Collection runs while the local application is running. Refresh view reads stored data;
+            it does not call Supercell.
+          </p>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Entity</th>
+                  <th>Result</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (a of d.attempts; track a.id) {
+                  <tr>
+                    <td>{{ a.at | date: 'd MMM, HH:mm' }}</td>
+                    <td>{{ a.kind }} · {{ a.tag }}</td>
+                    <td>{{ a.status }}</td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="3">No collection attempts yet.</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </section>
+      }
+      <footer>
+        <span><span class="status-dot"></span> {{ d.collectorStatus }}</span
+        ><span
+          >Unofficial fan project ·
+          <a href="https://supercell.com/en/fan-content-policy/">Not endorsed by Supercell</a></span
+        >
+      </footer>
+    } @else {
+      <p class="empty" role="status">Loading your local workspace…</p>
+    }
+  </main>
+</div>

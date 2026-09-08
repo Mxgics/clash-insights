@@ -1,0 +1,15 @@
+name: Improvement
+description: Propose an evidence-backed product improvement
+title: "[Idea]: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Desired player or clan outcome
+    validations:
+      required: true
+  - type: textarea
+    id: data
+    attributes:
+      label: Data and reliability considerations

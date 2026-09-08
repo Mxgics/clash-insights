@@ -1,0 +1,132 @@
+:host {
+  display: flex;
+  background: #162f32;
+}
+aside {
+  background: #162f32;
+  color: #eaf4f2;
+  padding: 34px 22px;
+  display: flex;
+  flex-direction: column;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  font-weight: 800;
+  letter-spacing: 2px;
+  font-size: 17px;
+}
+.brand-light {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: #b2ceca;
+  margin-top: 4px;
+}
+.crest {
+  display: grid;
+  place-items: center;
+  border: 1px solid #9ec7ba;
+  border-radius: 12px 12px 18px 18px;
+  width: 42px;
+  height: 47px;
+  color: #e0c385;
+  letter-spacing: 0;
+}
+.nav-label {
+  font-size: 9px;
+  letter-spacing: 1.8px;
+  color: #aac3c0;
+  margin: 52px 0 17px;
+}
+nav {
+  display: grid;
+  gap: 7px;
+}
+nav button {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-align: left;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #c7d8d5;
+  padding: 14px;
+  font-weight: 600;
+}
+nav button.active {
+  background: #315052;
+  color: #fff;
+}
+.nav-dot {
+  width: 8px;
+  height: 8px;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+}
+.active .nav-dot {
+  background: #d8bb7c;
+  border-color: #d8bb7c;
+}
+.local-card {
+  margin-top: auto;
+  padding: 24px 0 0;
+  font-size: 12px;
+}
+.local-card p {
+  margin: 9px 0;
+  color: #b5cbc7;
+}
+.local-card small {
+  font-size: 10px;
+  color: #b5cbc7;
+}
+aside {
+  width: 100%;
+  min-height: 100vh;
+}
+.status-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #6aac91;
+  margin-right: 6px;
+}
+@media (max-width: 700px) {
+  :host {
+    display: block;
+  }
+  aside {
+    min-height: 0;
+    padding: 16px;
+  }
+  .brand {
+    font-size: 14px;
+  }
+  .crest {
+    width: 31px;
+    height: 34px;
+  }
+  .nav-label,
+  .local-card {
+    display: none;
+  }
+  nav {
+    display: flex;
+    overflow-x: auto;
+    margin-top: 16px;
+    gap: 3px;
+  }
+  nav button {
+    padding: 10px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+  .nav-dot {
+    display: none;
+  }
+}

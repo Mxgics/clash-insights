@@ -1,0 +1,326 @@
+.shell {
+  display: grid;
+  grid-template-columns: 224px 1fr;
+  min-height: 100vh;
+}
+.skip {
+  position: absolute;
+  left: 10px;
+  top: -60px;
+  background: white;
+  padding: 12px;
+  z-index: 10;
+}
+.skip:focus {
+  top: 10px;
+}
+.status-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #6aac91;
+  margin-right: 6px;
+}
+main {
+  padding: 0 42px;
+  min-width: 0;
+  max-width: 1700px;
+  width: 100%;
+}
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #dfe5e8;
+  height: 81px;
+}
+.breadcrumb {
+  font-size: 10px;
+  letter-spacing: 1.6px;
+  color: #53666e;
+}
+.breadcrumb span {
+  margin: 0 16px;
+  color: #97a6ad;
+}
+.refresh {
+  border: 1px solid #d3dcdf;
+  background: #fff;
+  border-radius: 6px;
+  padding: 10px 15px;
+  color: #304d52;
+  font-size: 12px;
+}
+.page-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 34px 0 22px;
+}
+h1 {
+  font-size: 32px;
+  letter-spacing: -1.2px;
+  font-weight: 650;
+  margin-bottom: 10px;
+}
+.subtitle {
+  color: #4f646c;
+  line-height: 1.6;
+  margin: 0;
+}
+.version {
+  font-size: 9px;
+  letter-spacing: 1px;
+  border: 1px solid #d8e1e4;
+  border-radius: 4px;
+  padding: 7px;
+  color: #53666e;
+  white-space: nowrap;
+}
+.notice {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  background: #faf4e7;
+  border: 1px solid #ecdfbf;
+  padding: 12px 16px;
+  border-radius: 7px;
+  color: #4f646c;
+  font-size: 12px;
+  margin-bottom: 24px;
+}
+.notice strong {
+  font-size: 9px;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+.notice.live {
+  background: #e6f2ed;
+  border-color: #c5ded0;
+  color: #315b49;
+}
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 17px;
+  margin-bottom: 24px;
+}
+.metrics article {
+  background: white;
+  border: 1px solid #e0e6e8;
+  border-radius: 9px;
+  padding: 21px;
+}
+.metrics article > span {
+  font-size: 9px;
+  letter-spacing: 1.3px;
+  color: #4f646c;
+  font-weight: 700;
+}
+.metrics strong {
+  display: block;
+  font-size: 32px;
+  font-weight: 600;
+  margin: 12px 0 6px;
+}
+.metrics em {
+  font-size: 13px;
+  font-weight: 400;
+  font-style: normal;
+  margin-left: 8px;
+  color: #4f646c;
+}
+.metrics small {
+  font-size: 11px;
+  color: #4f646c;
+}
+.two-column {
+  display: grid;
+  grid-template-columns: 1.45fr 1fr;
+  gap: 22px;
+}
+.count {
+  border-radius: 5px;
+  background: #edf2f3;
+  padding: 5px 9px;
+  font-size: 11px;
+}
+.player {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 0;
+  border-top: 1px solid #edf0f1;
+  background: white;
+  width: 100%;
+  text-align: left;
+  padding: 14px 0;
+  color: #293c43;
+}
+.player:hover {
+  background: #f5f9f7;
+}
+.avatar {
+  width: 35px;
+  height: 35px;
+  background: #e9efed;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  color: #426b5e;
+  font-weight: 700;
+}
+.player-name {
+  flex: 1;
+}
+.player strong {
+  display: block;
+  font-size: 12px;
+}
+.player small {
+  display: block;
+  font-size: 10px;
+  color: #4f646c;
+  margin-top: 5px;
+}
+.score {
+  text-align: right;
+  font-size: 13px;
+  font-weight: 600;
+}
+.player .warning {
+  color: #925c13;
+}
+.clan-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.clan-crest {
+  display: grid;
+  place-items: center;
+  width: 43px;
+  height: 46px;
+  background: #f5ecd8;
+  border: 1px solid #e7d7b0;
+  border-radius: 9px 9px 18px 18px;
+  color: #80652f;
+  font-size: 17px;
+  font-weight: 700;
+}
+.clan-meta {
+  display: flex;
+  gap: 20px;
+  color: #4f646c;
+  font-size: 11px;
+}
+.clan-meta strong {
+  color: #355b50;
+}
+.tag {
+  font-size: 9px;
+  color: #4f646c;
+  margin-left: 10px;
+}
+.roster-note {
+  font-size: 11px;
+  color: #4f646c;
+  margin-top: 17px;
+  line-height: 1.6;
+}
+footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  font-size: 10px;
+  color: #4f646c;
+  padding: 3px 0 28px;
+  line-height: 1.8;
+}
+.war-score {
+  font-size: 64px;
+  color: #2e6e5b;
+  font-weight: 700;
+  margin: 25px 0;
+}
+.war-score span {
+  color: #87999e;
+  padding: 0 20px;
+}
+.error {
+  padding: 50px 0;
+  color: #874422;
+}
+@media (min-width: 1600px) {
+  main {
+    padding: 0 65px;
+  }
+}
+@media (max-width: 1100px) {
+  main {
+    padding: 0 24px;
+  }
+  .shell {
+    grid-template-columns: 190px 1fr;
+  }
+  .two-column {
+    grid-template-columns: 1fr;
+  }
+  .metrics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  h1 {
+    font-size: 27px;
+  }
+}
+@media (max-width: 700px) {
+  .shell {
+    display: block;
+  }
+  main {
+    padding: 0 16px;
+  }
+  header {
+    height: 65px;
+  }
+  .page-heading {
+    margin-top: 25px;
+  }
+  .version {
+    display: none;
+  }
+  h1 {
+    font-size: 25px;
+  }
+  .notice {
+    align-items: flex-start;
+    font-size: 11px;
+    line-height: 1.6;
+  }
+  .metrics {
+    gap: 10px;
+  }
+  .metrics article {
+    padding: 16px;
+  }
+  .metrics strong {
+    font-size: 28px;
+  }
+  .clan-meta {
+    gap: 10px;
+  }
+  footer {
+    flex-direction: column;
+  }
+  .tag {
+    display: block;
+    margin: 5px 0 0;
+  }
+  .breadcrumb {
+    font-size: 9px;
+  }
+  .two-column {
+    gap: 0;
+  }
+}

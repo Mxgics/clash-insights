@@ -1,0 +1,96 @@
+<section class="panel progression">
+  <div class="panel-heading">
+    <div>
+      <p class="eyebrow">PROGRESSION</p>
+      <h2>{{ player()?.name ?? 'Your first player' }} <span class="muted">/ trophies</span></h2>
+    </div>
+    <div class="segments" aria-label="History range">
+      @for (days of [7, 14, 90]; track days) {
+        <button
+          [class.selected]="range() === days"
+          [attr.aria-pressed]="range() === days"
+          (click)="range.set(days)"
+        >
+          {{ days }}D
+        </button>
+      }
+    </div>
+  </div>
+  @if (player(); as p) {
+    <div class="chart-number">
+      {{ p.trophies === null ? 'Unavailable' : (p.trophies | number)
+      }}<span
+        >{{ change() === null ? 'Change unavailable' : (change()! >= 0 ? '+' : '') + change() }} ·
+        selected {{ range() }} days</span
+      >
+    </div>
+    @if (resource.error()) {
+      <p role="alert">
+        History could not be loaded. <button (click)="resource.reload()">Retry history</button>
+      </p>
+    } @else if (resource.isLoading()) {
+      <p role="status">Loading history…</p>
+    } @else {
+      <svg
+        class="chart"
+        viewBox="0 0 700 190"
+        role="img"
+        [attr.aria-label]="p.name + ' trophy history; exact values in the table below'"
+      >
+        <path d="M20 30H680 M20 75H680 M20 120H680 M20 165H680" stroke="#e4e9ed" fill="none" />
+        <path
+          [attr.d]="chart()"
+          fill="none"
+          stroke="#257668"
+          stroke-width="3"
+          stroke-linejoin="round"
+          stroke-linecap="round"
+        />
+      </svg>
+      <div class="chart-foot">
+        <span>{{ history()[0]?.at | date: 'd MMM' }}</span
+        ><span>Breaks indicate gaps in observation</span
+        ><span>{{ history()[history().length - 1]?.at | date: 'd MMM' }}</span>
+      </div>
+      <p class="donation-note">
+        Donation counter change:
+        {{
+          donationChange() === null
+            ? 'unavailable (reset, missing data or too few observations)'
+            : donationChange()
+        }}. Gaps may hide resets.
+      </p>
+      <details>
+        <summary>View exact history</summary>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Trophies</th>
+                <th>Donation counter</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (h of history(); track h.at) {
+                <tr>
+                  <td>{{ h.at | date: 'd MMM, HH:mm' }}</td>
+                  <td>{{ h.trophies ?? 'Unavailable' }}</td>
+                  <td>{{ h.donations ?? 'Unavailable' }}</td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="3">No observations in this range.</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </details>
+    }
+  } @else {
+    <p class="empty">
+      No player observations yet. Configure player tags and credentials to begin live collection.
+    </p>
+  }
+</section>

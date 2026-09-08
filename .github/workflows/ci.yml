@@ -1,0 +1,76 @@
+name: Clash Insights CI
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: clash-insights-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Backend
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: clashinsights
+          POSTGRES_USER: clash
+          POSTGRES_PASSWORD: ci-only-placeholder
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U clash -d clashinsights"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      CLASH_TEST_CONNECTION: Host=127.0.0.1;Port=5432;Database=clashinsights;Username=clash;Password=ci-only-placeholder
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+          cache: true
+          cache-dependency-path: '**/packages.lock.json'
+      - run: dotnet restore --locked-mode
+      - run: dotnet build --configuration Release --no-restore
+      - run: dotnet test tests/ClashInsights.Tests --configuration Release --no-build
+      - run: dotnet tool restore
+      - run: dotnet ef migrations list --project src/ClashInsights.Api --startup-project src/ClashInsights.Api --configuration Release --no-build
+
+  web:
+    name: Web
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.19.0
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci --no-audit
+      - run: npm test -- --watch=false
+      - run: npm run build
+
+  compose:
+    name: Compose
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose config --quiet
+        env:
+          CLASH_DB_PASSWORD: ci-only-placeholder
