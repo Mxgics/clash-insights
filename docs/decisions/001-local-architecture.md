@@ -1,6 +1,6 @@
 # ADR 001: Local monolith with persistent observations
 
-Status: implemented baseline; product defaults remain provisional.
+Status: implemented baseline; defaults accepted: 10 players, 2 clans, hourly, 90 days.
 
 Use Angular 22 and .NET 10 per user selection, PostgreSQL 17 for persistent history, and one local web host/collector. PostgreSQL avoids a SQLite provider migration in v2. The user chose local v1 and hosted v2; no cloud resources are needed now. Loopback binding and request checks limit access to this computer. Fixed tracking configuration avoids v1 account/admin complexity.
 

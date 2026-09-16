@@ -37,11 +37,15 @@
         role="img"
         [attr.aria-label]="p.name + ' trophy history; exact values in the table below'"
       >
-        <path d="M20 30H680 M20 75H680 M20 120H680 M20 165H680" stroke="#e4e9ed" fill="none" />
+        <path
+          d="M20 30H680 M20 75H680 M20 120H680 M20 165H680"
+          stroke="var(--chart-grid)"
+          fill="none"
+        />
         <path
           [attr.d]="chart()"
           fill="none"
-          stroke="#257668"
+          stroke="var(--chart-line)"
           stroke-width="3"
           stroke-linejoin="round"
           stroke-linecap="round"

@@ -3,13 +3,26 @@
   <app-workspace-nav [(section)]="section" />
   <main id="main">
     <header>
-      <div class="breadcrumb">WORKSPACE <span>/</span> {{ section() }}</div>
-      <button class="refresh" (click)="service.refresh()" [disabled]="service.data.isLoading()">
-        {{ service.data.isLoading() ? 'Loading…' : 'Refresh view' }}
-      </button>
+      <div class="breadcrumb">
+        {{ preferences.settings().displayName || 'WORKSPACE' }} <span>/</span> {{ section() }}
+      </div>
+      <div class="flex items-center gap-2">
+        <button
+          class="refresh"
+          type="button"
+          (click)="preferences.toggleTheme()"
+          [attr.aria-label]="preferences.dark() ? 'Switch to light mode' : 'Switch to dark mode'"
+        >
+          {{ preferences.dark() ? 'Light mode' : 'Dark mode' }}</button
+        ><button class="refresh" (click)="service.refresh()" [disabled]="service.data.isLoading()">
+          {{ service.data.isLoading() ? 'Loading…' : 'Refresh view' }}
+        </button>
+      </div>
     </header>
-    @if (service.data.error()) {
-      <div class="error" role="alert">
+    @if (section() === 'My profile') {
+      <app-my-profile />
+    } @else if (service.data.error()) {
+      <div class="py-12 text-[var(--warning)]" role="alert">
         <h1>Unable to load your dashboard</h1>
         <p>Check that the local API and PostgreSQL are running, then refresh the view.</p>
       </div>
@@ -177,7 +190,7 @@
               {{ w.opponent === 'Unavailable' ? 'No opponent available' : 'Against ' + w.opponent }}
             </h2>
             @if (w.state !== 'notInWar' && w.opponent !== 'Unavailable') {
-              <div class="war-score">
+              <div class="my-6 text-6xl font-bold text-[var(--accent)]">
                 {{ w.stars ?? 'Unavailable' }} <span>—</span> {{ w.opponentStars ?? 'Unavailable' }}
               </div>
               <p>

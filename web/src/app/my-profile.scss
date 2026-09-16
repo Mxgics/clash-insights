@@ -1,0 +1,40 @@
+.profile {
+  color: var(--text);
+}
+input,
+select,
+.theme-option {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--border);
+}
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+.help {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+.validation {
+  color: var(--warning);
+  font-size: 12px;
+}
+.save {
+  background: var(--action);
+  color: var(--on-action);
+}
+.save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.theme-option[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: var(--selected);
+  font-weight: 600;
+}
+.theme-option:hover {
+  background: var(--hover);
+}

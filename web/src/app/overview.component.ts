@@ -2,14 +2,17 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { DashboardService, Player } from './dashboard.service';
 import { HistoryChart } from './history-chart';
+import { MyProfile } from './my-profile';
+import { Preferences } from './preferences';
 import { WorkspaceNav } from './workspace-nav';
 @Component({
   selector: 'app-overview',
-  imports: [DatePipe, DecimalPipe, HistoryChart, WorkspaceNav],
+  imports: [DatePipe, DecimalPipe, HistoryChart, WorkspaceNav, MyProfile],
   templateUrl: './overview.component.html',
   styleUrl: './overview.component.scss',
 })
 export class Overview {
+  readonly preferences = inject(Preferences);
   readonly service = inject(DashboardService);
   readonly section = signal('Overview');
   readonly selectedTag = signal('');
@@ -17,7 +20,10 @@ export class Overview {
     this.service.data.hasValue() ? this.service.data.value() : undefined,
   );
   readonly player = computed(
-    () => this.data()?.players.find((p) => p.tag === this.selectedTag()) ?? this.data()?.players[0],
+    () =>
+      this.data()?.players.find(
+        (p) => p.tag === (this.selectedTag() || this.preferences.settings().primaryTag),
+      ) ?? this.data()?.players[0],
   );
   readonly totalDonations = computed(() => {
     const p = this.data()?.players ?? [];

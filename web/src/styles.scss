@@ -1,10 +1,50 @@
+:root {
+  --page: #f5f7f8;
+  --surface: #fff;
+  --text: #202e36;
+  --muted: #4f646c;
+  --border: #d6e0e3;
+  --subtle: #f7f9fa;
+  --hover: #f0f6f3;
+  --selected: #e9f1ee;
+  --accent: #256451;
+  --action: #245f50;
+  --on-action: #fff;
+  --focus: #a55b0a;
+  --warning: #925c13;
+  --notice-bg: #faf4e7;
+  --notice-border: #ecdfbf;
+  --notice-text: #755719;
+  --chart-grid: #e4e9ed;
+  --chart-line: #257668;
+}
+:root[data-theme='dark'] {
+  --page: #111e24;
+  --surface: #1a2b33;
+  --text: #edf3f5;
+  --muted: #b3c6ce;
+  --border: #405661;
+  --subtle: #20343e;
+  --hover: #263f48;
+  --selected: #29463f;
+  --accent: #9bdfc3;
+  --action: #9bdfc3;
+  --on-action: #132e25;
+  --focus: #f0be6c;
+  --warning: #f0bf79;
+  --notice-bg: #352f21;
+  --notice-border: #675637;
+  --notice-text: #f0d394;
+  --chart-grid: #405661;
+  --chart-line: #91ddc0;
+}
 * {
   box-sizing: border-box;
 }
 body {
   margin: 0;
-  background: #f5f7f8;
-  color: #202e36;
+  background: var(--page);
+  color: var(--text);
   font-family:
     Inter,
     Segoe UI,
@@ -28,7 +68,7 @@ button:disabled {
 button:focus-visible,
 a:focus-visible,
 summary:focus-visible {
-  outline: 3px solid #a55b0a;
+  outline: 3px solid var(--focus);
   outline-offset: 4px;
 }
 a {
@@ -44,7 +84,7 @@ button {
 }
 
 .eyebrow {
-  color: #4f646c;
+  color: var(--muted);
   letter-spacing: 1.7px;
   font-size: 10px;
   font-weight: 700;
@@ -56,8 +96,8 @@ h2 {
   margin-bottom: 0;
 }
 .panel {
-  background: white;
-  border: 1px solid #dfe6e8;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 24px;
   margin-bottom: 24px;
@@ -70,7 +110,7 @@ h2 {
   margin-bottom: 20px;
 }
 .muted {
-  color: #4f646c;
+  color: var(--muted);
   font-weight: 400;
 }
 .table-scroll {
@@ -84,22 +124,22 @@ table {
 }
 th {
   font-size: 9px;
-  color: #4f646c;
+  color: var(--muted);
   letter-spacing: 1px;
   text-transform: uppercase;
   font-weight: 600;
   padding: 12px;
-  background: #f7f9fa;
+  background: var(--subtle);
 }
 td {
   padding: 13px 12px;
-  border-bottom: 1px solid #edf1f2;
+  border-bottom: 1px solid var(--border);
   font-size: 12px;
 }
 .empty {
   padding: 20px 0;
   line-height: 1.7;
-  color: #5e737a;
+  color: var(--muted);
 }
 .panel {
   padding: 18px;
@@ -115,3 +155,26 @@ td {
     flex-wrap: wrap;
   }
 }
+
+header .breadcrumb {
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+header {
+  gap: 12px;
+}
+header > div:last-child {
+  flex-shrink: 0;
+}
+@media (max-width: 700px) {
+  header {
+    height: auto !important;
+    min-height: 80px;
+    flex-wrap: wrap;
+    padding: 12px 0;
+  }
+  .breadcrumb {
+    max-width: 100%;
+  }
+}
+

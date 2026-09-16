@@ -1,6 +1,17 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <script>
+      try {
+        var p = JSON.parse(localStorage.getItem('clash-insights.preferences.v1') || '{}');
+        var d =
+          p.theme === 'dark' ||
+          (!['light', 'dark'].includes(p.theme) &&
+            matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.dataset.theme = d ? 'dark' : 'light';
+        document.documentElement.style.colorScheme = d ? 'dark' : 'light';
+      } catch {}
+    </script>
     <meta charset="utf-8" />
     <title>Web</title>
     <base href="/" />
