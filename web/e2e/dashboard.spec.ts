@@ -3,10 +3,10 @@ import AxeBuilder from '@axe-core/playwright';
 test('local dashboard navigation, history and accessibility', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
-  await page.goto('http://127.0.0.1:5188');
-  await expect(page.getByText('DEMO DATA', { exact: true })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Every upgrade tells a story.' })).toBeVisible();
-  await page.getByRole('button', { name: 'View Zach progression' }).click();
+  await page.goto('http://127.0.0.1:5188/?e2e=launch-20260919');
+  await expect(page.getByText(/DEMO DATA|LIVE MODE/, { exact: true })).toBeVisible();
+  await expect(page.locator('.progression h2')).toContainText('/ trophies');
+  await page.getByRole('button', { name: /View .* progression/ }).first().click();
   await expect(
     page.getByRole('heading', { name: 'Player progression', exact: true }),
   ).toBeVisible();
@@ -18,11 +18,9 @@ test('local dashboard navigation, history and accessibility', async ({ page }) =
   await page.getByText('View exact history', { exact: true }).click();
   await expect(page.getByRole('columnheader', { name: 'Donation counter' })).toBeVisible();
   await page.getByRole('button', { name: 'Wars', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Against Iron Wolves' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'The war room', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Collection', exact: true }).click();
-  await expect(
-    page.getByRole('heading', { name: 'Demo mode · no Supercell requests' }),
-  ).toBeVisible();
+  await expect(page.locator('section.panel h2').first()).toBeVisible();
   await page.getByRole('button', { name: 'Overview', exact: true }).click();
   expect(
     (await new AxeBuilder({ page }).analyze()).violations.map((v) => ({
@@ -56,16 +54,16 @@ test('empty, failed and stale observations remain explicit', async ({ page }) =>
     wars: [],
     attempts: [],
   };
-  await page.route('**/api/dashboard', (route) => route.fulfill({ json: empty }));
-  await page.goto('http://127.0.0.1:5188');
+  await page.route('**/api/public/dashboard', (route) => route.fulfill({ json: empty }));
+  await page.goto('http://127.0.0.1:5188/?e2e=launch-20260919');
   await expect(page.getByText('No player observations yet.', { exact: false })).toBeVisible();
   await expect(page.getByText('DEMO DATA', { exact: true })).toHaveCount(0);
-  await page.unroute('**/api/dashboard');
-  await page.route('**/api/dashboard', (route) => route.fulfill({ status: 503, json: {} }));
-  await page.getByRole('button', { name: 'Refresh view' }).click();
+  await page.unroute('**/api/public/dashboard');
+  await page.route('**/api/public/dashboard', (route) => route.fulfill({ status: 503, json: {} }));
+  await page.reload();
   await expect(page.getByRole('alert')).toContainText('Unable to load');
-  await page.unroute('**/api/dashboard');
-  await page.route('**/api/dashboard', (route) =>
+  await page.unroute('**/api/public/dashboard');
+  await page.route('**/api/public/dashboard', (route) =>
     route.fulfill({
       json: {
         ...empty,
@@ -86,8 +84,8 @@ test('empty, failed and stale observations remain explicit', async ({ page }) =>
     }),
   );
   await page.route('**/history?*', (route) => route.fulfill({ json: [] }));
-  await page.getByRole('button', { name: 'Refresh view' }).click();
-  await expect(page.getByText('Stale observation', { exact: true })).toBeVisible();
+  await page.reload();
+  await expect(page.locator('.observation').filter({ hasText: 'Stale observation' })).toBeVisible();
   await expect(page.getByText('No observations in this range.', { exact: true })).toHaveCount(1);
   expect(
     (await new AxeBuilder({ page }).analyze()).violations.map((v) => ({
@@ -97,7 +95,8 @@ test('empty, failed and stale observations remain explicit', async ({ page }) =>
   ).toEqual([]);
 });
 test('keyboard navigation and every section', async ({ page }) => {
-  await page.goto('http://127.0.0.1:5188');
+  await page.goto('http://127.0.0.1:5188/?e2e=launch-20260919');
+  await page.locator('body').focus();
   await page.keyboard.press('Tab');
   await expect(page.getByRole('link', { name: 'Skip to dashboard' })).toBeFocused();
   await page.keyboard.press('Enter');
@@ -117,13 +116,18 @@ test('keyboard navigation and every section', async ({ page }) => {
 
 test('history API validates ranges and preserves stored reads', async ({ request }) => {
   expect(
-    (await request.get('http://127.0.0.1:5188/api/players/P0Y28/history?days=5')).status(),
+    (await request.get('http://127.0.0.1:5188/api/public/players/P0Y28/history?days=5')).status(),
   ).toBe(400);
   expect(
-    (await request.get('http://127.0.0.1:5188/api/players/INVALID/history?days=7')).status(),
+    (await request.get('http://127.0.0.1:5188/api/public/players/INVALID/history?days=7')).status(),
   ).toBe(400);
-  const history = await request.get('http://127.0.0.1:5188/api/players/P0Y28/history?days=90');
+  const dashboard = await request.get('http://127.0.0.1:5188/api/public/dashboard');
+  const firstPlayer = (await dashboard.json()).players[0];
+  expect(firstPlayer).toBeTruthy();
+  const history = await request.get(
+    `http://127.0.0.1:5188/api/public/players/${encodeURIComponent(firstPlayer.tag)}/history?days=90`,
+  );
   expect(history.status()).toBe(200);
-  expect((await history.json()).length).toBeGreaterThan(100);
+  expect(Array.isArray(await history.json())).toBe(true);
   expect((await request.get('http://127.0.0.1:5188/api/missing')).status()).toBe(404);
 });

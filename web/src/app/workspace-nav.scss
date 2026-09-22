@@ -1,10 +1,10 @@
 :host {
   display: flex;
-  background: #162f32;
+  background: #121c2e;
 }
 aside {
-  background: #162f32;
-  color: #eaf4f2;
+  background: #121c2e;
+  color: #edf2fc;
   padding: 34px 22px;
   display: flex;
   flex-direction: column;
@@ -22,23 +22,23 @@ aside {
   display: block;
   font-size: 11px;
   letter-spacing: 3px;
-  color: #b2ceca;
+  color: #b1bed3;
   margin-top: 4px;
 }
 .crest {
   display: grid;
   place-items: center;
-  border: 1px solid #9ec7ba;
+  border: 1px solid #526b94;
   border-radius: 12px 12px 18px 18px;
   width: 42px;
   height: 47px;
-  color: #e0c385;
+  color: #a6c6ff;
   letter-spacing: 0;
 }
 .nav-label {
   font-size: 9px;
   letter-spacing: 1.8px;
-  color: #aac3c0;
+  color: #a8b8d1;
   margin: 52px 0 17px;
 }
 nav {
@@ -53,12 +53,12 @@ nav button {
   border: 0;
   border-radius: 7px;
   background: transparent;
-  color: #c7d8d5;
+  color: #cbd7eb;
   padding: 14px;
   font-weight: 600;
 }
 nav button.active {
-  background: #315052;
+  background: #293f63;
   color: #fff;
 }
 .nav-dot {
@@ -68,8 +68,8 @@ nav button.active {
   border-radius: 2px;
 }
 .active .nav-dot {
-  background: #d8bb7c;
-  border-color: #d8bb7c;
+  background: #a6c6ff;
+  border-color: #a6c6ff;
 }
 .local-card {
   margin-top: auto;
@@ -78,11 +78,11 @@ nav button.active {
 }
 .local-card p {
   margin: 9px 0;
-  color: #b5cbc7;
+  color: #b1bed3;
 }
 .local-card small {
   font-size: 10px;
-  color: #b5cbc7;
+  color: #b1bed3;
 }
 aside {
   width: 100%;
@@ -93,7 +93,7 @@ aside {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #6aac91;
+  background: #93baff;
   margin-right: 6px;
 }
 @media (max-width: 700px) {

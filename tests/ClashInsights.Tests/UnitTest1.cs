@@ -28,6 +28,19 @@ public class BehaviourTests {
         var view=Dashboard.Build([new(){Kind="clan",Tag="#P0Y28",ObservedAt=DateTimeOffset.UtcNow.AddDays(-1),Json="{\"memberList\":[{\"tag\":\"#P0Y29\",\"name\":\"Old\"}]}"},new(){Kind="clan",Tag="#P0Y28",ObservedAt=DateTimeOffset.UtcNow,Json="{\"memberList\":[{\"tag\":\"#P0Y2L\",\"name\":\"New\"}]}"}],[],new(),"test");
         Assert.Equal(["New"],view.Clans[0].Joined); Assert.Equal(["Old"],view.Clans[0].Left);
     }
+    [Fact] public void RichClanAndPlayerFieldsPreserveUnavailableValues() {
+        var at=DateTimeOffset.UtcNow;
+        var view=Dashboard.Build([
+            new(){Kind="player",Tag="#P0Y28",ObservedAt=at,Json="{\"name\":\"Player\",\"leagueTier\":{\"name\":\"Legend League\"},\"bestTrophies\":6000}"},
+            new(){Kind="clan",Tag="#P0Y29",ObservedAt=at,Json="{\"name\":\"Clan\",\"isWarLogPublic\":false,\"warWins\":12,\"warLeague\":{\"name\":\"Master League I\"},\"memberList\":[{\"tag\":\"#P0Y2L\",\"name\":\"Member\",\"role\":\"leader\",\"clanRank\":1}]}"}
+        ],[],new(),"test");
+        Assert.Equal("Legend League",view.Players.Single().League);
+        Assert.Equal(6000,view.Players.Single().BestTrophies);
+        Assert.Null(view.Players.Single().WarStars);
+        Assert.False(view.Clans.Single().WarLogPublic);
+        Assert.Equal("Master League I",view.Clans.Single().WarLeague);
+        Assert.Null(view.Clans.Single().Members.Single().Donations);
+    }
     private sealed class Stub(HttpStatusCode code):HttpMessageHandler {
         public int Calls {get;private set;}
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,CancellationToken ct) { Calls++;return Task.FromResult(new HttpResponseMessage(code)); }

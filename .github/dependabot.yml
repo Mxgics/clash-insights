@@ -6,7 +6,9 @@ updates:
       interval: weekly
     open-pull-requests-limit: 5
   - package-ecosystem: nuget
-    directory: /
+    directories:
+      - /src/ClashInsights.Api
+      - /tests/ClashInsights.Tests
     schedule:
       interval: weekly
     open-pull-requests-limit: 5

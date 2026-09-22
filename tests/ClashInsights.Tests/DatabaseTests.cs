@@ -29,9 +29,14 @@ public class DatabaseTests {
     await db.SaveChangesAsync();
     var summary=await Queries.Summary(db,new(){Mode="Live"},"test",default);
     Assert.Contains(summary.Players,p=>p.Tag=="#P0Y28");
-    Assert.Single(await Queries.History(db,"Live","#P0Y28",90,default));
-    Assert.Empty(await Queries.History(db,"Live","#P0Y28",7,default));
-    Assert.Equal(30240,(await Queries.History(db,"Live","#P0Y29",90,default)).Length);
+    Assert.Single((await Queries.History(db,"Live","#P0Y28",90,default))!);
+    Assert.Empty((await Queries.History(db,"Live","#P0Y28",7,default))!);
+    Assert.Equal(30240,(await Queries.History(db,"Live","#P0Y29",90,default))!.Length);
+    var publicSummary=await Queries.Summary(db,new(){Mode="Live"},"public",default,["#P0Y29"],includeAttempts:false);
+    Assert.DoesNotContain(publicSummary.Players,player=>player.Tag=="#P0Y28");
+    Assert.Contains(publicSummary.Players,player=>player.Tag=="#P0Y29");
+    Assert.Empty(publicSummary.Attempts);
+    Assert.Null(await Queries.History(db,"Live","#P0Y28",90,default,["#P0Y29"]));
    }
    // PostgreSQL ownership spans independent connections.
    await using(var a=new NpgsqlConnection(testConnection))await using(var b=new NpgsqlConnection(testConnection)) {
@@ -78,6 +83,7 @@ public class DatabaseTests {
   var clan=Dashboard.Build(rows,[],new(),"").Clans.Single();Assert.Empty(clan.Left);Assert.Null(clan.Points);
  }
  [Fact] public void CapacityIsBounded(){Assert.False(new TrackingOptions{PlayerTags=Enumerable.Repeat("#P0Y28",11).ToArray()}.IsValid());}
+ [Fact] public void PublicTagsMustBeTracked(){Assert.False(new TrackingOptions{ClanTags=["#P0Y28"],PublicClanTags=["#P0Y29"]}.IsValid());}
  [Theory][InlineData("[]")][InlineData("{\"error\":\"bad\"}")][InlineData("{\"name\":\"Clan\",\"memberList\":null}")]
  public void MalformedUpstreamIsRejected(string json){using var doc=JsonDocument.Parse(json);Assert.False(ClashClient.ValidPayload(doc.RootElement,"clans/test"));}
 }

@@ -2,11 +2,15 @@ import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 test('profile persistence, preference effects and both accessible themes', async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'light' });
-  await page.goto('http://127.0.0.1:5188');
+  await page.goto('http://127.0.0.1:5188/?e2e=launch-20260919');
+  const firstPlayer = await page.evaluate(async () => {
+    const response = await fetch('/api/public/dashboard');
+    return (await response.json()).players[0] as { tag: string; name: string };
+  });
   await page.getByRole('button', { name: 'My profile', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'My profile', exact: true })).toBeVisible();
   await page.getByLabel('Display name', { exact: true }).fill('Zach');
-  await page.getByLabel('Preferred player tag', { exact: true }).fill('p0y29');
+  await page.getByLabel('Preferred player tag', { exact: true }).fill(firstPlayer.tag);
   await page.getByLabel('Default history range', { exact: true }).selectOption('7');
   await page.getByRole('button', { name: 'Save preferences', exact: true }).click();
   await expect(page.getByRole('status')).toHaveText('Profile preferences saved.');
@@ -25,7 +29,7 @@ test('profile persistence, preference effects and both accessible themes', async
     'aria-pressed',
     'true',
   );
-  await expect(page.getByRole('heading', { name: 'Ember / trophies' })).toBeVisible();
+  await expect(page.locator('.progression h2')).toContainText(firstPlayer.name);
   for (const section of ['Overview', 'Players', 'Clan', 'Wars', 'Collection', 'My profile']) {
     await page.getByRole('button', { name: section, exact: true }).click();
     expect(
@@ -56,8 +60,8 @@ test('profile works when API is unavailable and handles blocked browser storage'
       throw new Error('Blocked');
     };
   });
-  await page.route('**/api/dashboard', (r) => r.fulfill({ status: 503, json: {} }));
-  await page.goto('http://127.0.0.1:5188');
+  await page.route('**/api/public/dashboard', (r) => r.fulfill({ status: 503, json: {} }));
+  await page.goto('http://127.0.0.1:5188/?e2e=launch-20260919');
   await page.getByRole('button', { name: 'My profile', exact: true }).click();
   await page.getByLabel('Preferred player tag', { exact: true }).fill('invalid!');
   await expect(page.getByRole('button', { name: 'Save preferences' })).toBeDisabled();

@@ -11,7 +11,25 @@ describe('Dashboard reads', () => {
     TestBed.tick();
     await Promise.resolve();
     const http = TestBed.inject(HttpTestingController);
-    const request = http.expectOne('/api/dashboard');
+    http.expectOne('/api/session').flush({ authenticated: false, name: null, loginAvailable: true });
+    TestBed.tick();
+    await Promise.resolve();
+    const request = http.expectOne('/api/public/dashboard');
+    expect(request.request.method).toBe('GET');
+    request.flush({});
+    http.verify();
+  });
+
+  it('switches to the private API only after an authenticated server session', async () => {
+    TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting()] });
+    TestBed.inject(DashboardService);
+    TestBed.tick();
+    await Promise.resolve();
+    const http = TestBed.inject(HttpTestingController);
+    http.expectOne('/api/session').flush({ authenticated: true, name: 'Owner', loginAvailable: true });
+    TestBed.tick();
+    await Promise.resolve();
+    const request = http.expectOne('/api/private/dashboard');
     expect(request.request.method).toBe('GET');
     request.flush({});
     http.verify();

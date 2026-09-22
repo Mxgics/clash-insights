@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [main, develop]
   push:
-    branches: [main, develop]
+    branches: [main, develop, 'codex/**']
 
 permissions:
   contents: read
@@ -33,16 +33,19 @@ jobs:
           --health-timeout 5s
           --health-retries 12
     env:
+      ConnectionStrings__Clash: Host=127.0.0.1;Port=5432;Database=clashinsights;Username=clash;Password=ci-only-placeholder
       CLASH_TEST_CONNECTION: Host=127.0.0.1;Port=5432;Database=clashinsights;Username=clash;Password=ci-only-placeholder
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
         with:
           dotnet-version: 10.0.x
           cache: true
           cache-dependency-path: '**/packages.lock.json'
-      - run: dotnet restore --locked-mode
-      - run: dotnet build --configuration Release --no-restore
+      - run: dotnet restore tests/ClashInsights.Tests --locked-mode
+      - run: dotnet build tests/ClashInsights.Tests --configuration Release --no-restore
       - run: dotnet test tests/ClashInsights.Tests --configuration Release --no-build
       - run: dotnet tool restore
       - run: dotnet ef migrations list --project src/ClashInsights.Api --startup-project src/ClashInsights.Api --configuration Release --no-build
@@ -55,8 +58,10 @@ jobs:
       run:
         working-directory: web
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 24.19.0
           cache: npm
@@ -70,7 +75,84 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - run: docker compose config --quiet
         env:
           CLASH_DB_PASSWORD: ci-only-placeholder
+
+  browser:
+    name: Browser
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: clashinsights
+          POSTGRES_USER: clash
+          POSTGRES_PASSWORD: ci-only-placeholder
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U clash -d clashinsights"
+          --health-interval 5s --health-timeout 5s --health-retries 12
+    env:
+      ConnectionStrings__Clash: Host=127.0.0.1;Port=5432;Database=clashinsights;Username=clash;Password=ci-only-placeholder
+      Tracking__Mode: Demo
+      Hosting__Hosted: 'false'
+      Auth__Enabled: 'false'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.19.0
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: 10.0.x
+      - run: npm ci --no-audit
+        working-directory: web
+      - run: npm run build
+        working-directory: web
+      - run: npx playwright install --with-deps chromium
+        working-directory: web
+      - name: Build and start isolated Demo host
+        shell: bash
+        run: |
+          mkdir -p src/ClashInsights.Api/wwwroot
+          cp -R web/dist/web/browser/. src/ClashInsights.Api/wwwroot/
+          dotnet restore src/ClashInsights.Api --locked-mode
+          dotnet publish src/ClashInsights.Api -c Release --no-restore -o "$RUNNER_TEMP/clash-host"
+          cd "$RUNNER_TEMP/clash-host"
+          dotnet ClashInsights.Api.dll > "$RUNNER_TEMP/clash-host.log" 2>&1 &
+          for attempt in {1..60}; do
+            if curl --fail --silent http://127.0.0.1:5188/health/ready; then exit 0; fi
+            sleep 1
+          done
+          cat "$RUNNER_TEMP/clash-host.log"
+          exit 1
+      - run: npm run e2e
+        working-directory: web
+
+  secrets:
+    name: Secrets
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install verified Gitleaks
+        shell: bash
+        run: |
+          curl --fail --location --silent --show-error https://github.com/gitleaks/gitleaks/releases/download/v8.30.0/gitleaks_8.30.0_linux_x64.tar.gz -o "$RUNNER_TEMP/gitleaks.tar.gz"
+          echo "79a3ab579b53f71efd634f3aaf7e04a0fa0cf206b7ed434638d1547a2470a66e  $RUNNER_TEMP/gitleaks.tar.gz" | sha256sum --check
+          tar -xzf "$RUNNER_TEMP/gitleaks.tar.gz" -C "$RUNNER_TEMP" gitleaks
+          echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
+      - name: Scan all fetched history and current files
+        run: |
+          gitleaks git --redact --log-opts="--all" .
+          gitleaks dir --redact .
