@@ -7,7 +7,7 @@ Personal player and clan dashboard. V1: localhost, unauthenticated viewing, conf
 Angular 22 (exact versions in web/package-lock.json), .NET 10, EF Core 10.0.11, Npgsql EF provider 10.0.3 and PostgreSQL 17. Angular is served by one ASP.NET Core host. The browser only reads local stored data. Background collection is sequential, protected by a PostgreSQL advisory lock; per-target due times and global Retry-After survive restart. Raw JSON is stored with source and observation time. Missing fields remain unavailable, not zero; charts break across gaps and donation resets are not interpreted as negative activity.
 
 ## 3. Current phase
-Public source release preparation is authorized as of 2026-09-22: MIT licensing, anonymized evidence, CI verification and GitHub protections. Hosted security, public/private query boundaries, Auth0 plumbing, Sentry and container packaging are implemented. Local live collection was verified on 2026-09-18; the real clan identity is redacted. No hosted application has been provisioned or deployed. Current release evidence is in test-plan.md and changes/005-public-source.md.
+The source repository was made public on 2026-09-25 with MIT licensing, anonymized evidence, passing release CI and verified GitHub protections. `main` is the default branch and `develop` remains the integration branch. Hosted security, public/private query boundaries, Auth0 plumbing, Sentry and container packaging are implemented. Local live collection was verified on 2026-09-18; the real clan identity is redacted. No hosted application has been provisioned or deployed. Current release evidence is in test-plan.md and changes/005-public-source.md.
 
 ## 4. Completed acceptance checks
 Clean frontend build; 12 frontend tests; 29 backend tests including real isolated PostgreSQL integration and security pipeline checks; local security-header/API smoke test; loopback bindings; npm audit clean; secret exclusions. A clean Demo backup/restore was rerun on 2026-09-22. See test-plan.md for exact current evidence.
@@ -29,5 +29,5 @@ Implemented browser-local My profile settings and light/dark/device themes using
 ## 8. Live clan activation — 2026-09-18
 Local configuration now runs Live with hourly collection for the locally tracked clan. See changes/003-live-clan.md for evidence and limitations.
 
-## 9. Public source release � 2026-09-22
-Use main as the default branch and develop for integration. MIT licensing, anonymized identifiers, full-history scanning and reproducible Demo checks are required. See changes/005-public-source.md and runbooks/v1-public-source.md. Publication status must be verified against GitHub; hosted launch remains separate.
+## 9. Public source release — 2026-09-25
+Published at https://github.com/Mxgics/clash-insights. `main` is the default branch and `develop` remains the integration branch. MIT licensing, anonymized identifiers, full-history scanning and reproducible Demo checks passed. Branch protections, required CI, read-only Actions defaults, SHA pin enforcement, dependency security updates, secret scanning, push protection, private vulnerability reporting and external-contributor workflow approval were verified after publication. See changes/005-public-source.md and runbooks/v1-public-source.md. Hosted launch remains separate.
