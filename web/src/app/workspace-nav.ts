@@ -6,5 +6,5 @@ import { Component, model } from '@angular/core';
 })
 export class WorkspaceNav {
   readonly section = model('Overview');
-  readonly sections = ['Overview', 'Players', 'Clan', 'Wars', 'Collection'];
+  readonly sections = ['Overview', 'Players', 'Clan', 'Wars', 'Collection', 'My profile'];
 }

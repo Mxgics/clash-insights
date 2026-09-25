@@ -1,0 +1,11 @@
+:host {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: var(--page);
+  color: var(--text);
+}
+main { max-width: 34rem; padding: 2rem; text-align: center; }
+main > p:first-child { color: var(--accent); font-size: 0.75rem; letter-spacing: 0.2em; }
+h1 { font-size: clamp(2rem, 8vw, 4rem); line-height: 1.05; }
+a { display: inline-block; margin-top: 1rem; color: var(--on-action); background: var(--action); padding: 0.8rem 1rem; border-radius: 0.5rem; }

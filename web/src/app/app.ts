@@ -1,4 +1,4 @@
 import { Component } from '@angular/core';
-import { Overview } from './overview.component';
-@Component({ selector: 'app-root', imports: [Overview], template: '<app-overview />' })
+import { RouterOutlet } from '@angular/router';
+@Component({ selector: 'app-root', imports: [RouterOutlet], template: '<router-outlet />' })
 export class App {}

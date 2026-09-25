@@ -1,11 +1,27 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <script>
+      try {
+        var p = JSON.parse(localStorage.getItem('clash-insights.preferences.v1') || '{}');
+        var d =
+          p.theme === 'dark' ||
+          (!['light', 'dark'].includes(p.theme) &&
+            matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.dataset.theme = d ? 'dark' : 'light';
+        document.documentElement.style.colorScheme = d ? 'dark' : 'light';
+      } catch {}
+    </script>
     <meta charset="utf-8" />
-    <title>Web</title>
+    <title>Clash Insights</title>
+    <meta name="description" content="Read-only Clash of Clans clan and player insights from saved observations." />
+    <meta name="robots" content="index,follow" />
+    <meta property="og:title" content="Clash Insights" />
+    <meta property="og:description" content="Clan rosters, player progress and war observations with clear timestamps and data gaps." />
+    <meta property="og:type" content="website" />
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   </head>
   <body>
     <app-root></app-root>

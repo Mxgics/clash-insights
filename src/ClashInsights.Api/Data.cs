@@ -30,12 +30,17 @@ public sealed class TrackingOptions {
     public string Mode { get; set; } = "Demo";
     public string[] PlayerTags { get; set; } = [];
     public string[] ClanTags { get; set; } = [];
+    public string[] PublicPlayerTags { get; set; } = [];
+    public string[] PublicClanTags { get; set; } = [];
     public int IntervalMinutes { get; set; } = 60;
     public int RetentionDays { get; set; } = 90;
     public int RequestSpacingMilliseconds { get; set; } = 1000;
     public bool IsValid() => (Mode is "Demo" or "Live") && IntervalMinutes is >= 1 and <= 1440
         && RetentionDays is >= 1 and <= 3650 && RequestSpacingMilliseconds is >= 250 and <= 60000
-        && PlayerTags.Length <= 10 && ClanTags.Length <= 2 && PlayerTags.Concat(ClanTags).All(Tags.IsValid);
+        && PlayerTags.Length <= 10 && ClanTags.Length <= 10
+        && PlayerTags.Concat(ClanTags).Concat(PublicPlayerTags).Concat(PublicClanTags).All(Tags.IsValid)
+        && PublicPlayerTags.Select(Tags.Normalize).Except(PlayerTags.Select(Tags.Normalize)).Any() == false
+        && PublicClanTags.Select(Tags.Normalize).Except(ClanTags.Select(Tags.Normalize)).Any() == false;
 }
 public static class Tags {
     public static string Normalize(string tag) => "#" + tag.Trim().TrimStart('#').ToUpperInvariant();

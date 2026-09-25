@@ -4,21 +4,21 @@
 }
 .segments {
   display: flex;
-  border: 1px solid #dce4e6;
+  border: 1px solid var(--border);
   border-radius: 5px;
   overflow: hidden;
 }
 .segments button {
   padding: 7px 10px;
-  background: white;
+  background: var(--surface);
   border: 0;
-  color: #586c73;
+  color: var(--muted);
   font-size: 10px;
   min-height: 30px;
 }
 .segments .selected {
-  background: #e9f1ee;
-  color: #245d50;
+  background: var(--selected);
+  color: var(--accent);
   font-weight: 700;
 }
 .chart-number {
@@ -28,7 +28,7 @@
 }
 .chart-number span {
   font-size: 10px;
-  color: #356e5e;
+  color: var(--accent);
   font-weight: 500;
   margin-left: 12px;
 }
@@ -40,14 +40,14 @@
 .chart-foot {
   display: flex;
   justify-content: space-between;
-  color: #4f646c;
+  color: var(--muted);
   font-size: 10px;
   margin-top: 8px;
   gap: 8px;
 }
 details {
   margin-top: 20px;
-  color: #44656c;
+  color: var(--muted);
   font-size: 12px;
 }
 summary {
@@ -67,10 +67,21 @@ summary {
 }
 .donation-note {
   font-size: 11px;
-  color: #53686f;
+  color: var(--muted);
   line-height: 1.6;
   margin-top: 18px;
 }
+.history-empty {
+  margin: 24px 0;
+  padding: 28px 20px;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  background: var(--subtle);
+  line-height: 1.7;
+  color: var(--muted);
+}
+.history-empty strong { color: var(--text); }
+.history-empty p { margin: 8px 0 0; font-size: 12px; }
 @media (max-width: 700px) {
   .chart-foot {
     font-size: 9px;
@@ -84,3 +95,4 @@ summary {
     margin: 8px 0 0;
   }
 }
+

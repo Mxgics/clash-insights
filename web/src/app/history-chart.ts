@@ -1,6 +1,7 @@
-import { Component, computed, input, signal, inject } from '@angular/core';
+import { Component, computed, linkedSignal, input, signal, inject } from '@angular/core';
 import { httpResource } from '@angular/common/http';
 import { DatePipe, DecimalPipe } from '@angular/common';
+import { Preferences } from './preferences';
 import { Player, DashboardService } from './dashboard.service';
 export interface HistoryPoint {
   at: string;
@@ -42,16 +43,10 @@ export class HistoryChart {
   readonly service = inject(DashboardService);
   readonly player = input<Player>();
   readonly intervalMinutes = input(60);
-  readonly range = signal(14);
+  readonly preferences = inject(Preferences);
+  readonly range = linkedSignal(() => this.preferences.settings().historyDays as number);
   readonly resource = httpResource<HistoryPoint[]>(() =>
-    this.player()
-      ? '/api/players/' +
-        encodeURIComponent(this.player()!.tag) +
-        '/history?days=' +
-        this.range() +
-        '&revision=' +
-        this.service.revision()
-      : undefined,
+    this.player() ? this.service.historyUrl(this.player()!.tag, this.range()) : undefined,
   );
   readonly history = computed(() => (this.resource.hasValue() ? this.resource.value() : []));
   readonly chart = computed(() => chartPath(this.history(), this.intervalMinutes()));

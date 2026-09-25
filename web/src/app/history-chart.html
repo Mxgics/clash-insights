@@ -31,17 +31,27 @@
     } @else if (resource.isLoading()) {
       <p role="status">Loading history…</p>
     } @else {
+      @if (history().length < 2) {
+        <div class="history-empty">
+          <strong>{{ history().length ? 'Your history starts here' : 'No observations in this range.' }}</strong>
+          <p>{{ history().length ? 'One observation saved. A trend needs at least two observations; the next collection will add another point.' : 'Choose a longer range or wait for the next collection.' }}</p>
+        </div>
+      } @else {
       <svg
         class="chart"
         viewBox="0 0 700 190"
         role="img"
         [attr.aria-label]="p.name + ' trophy history; exact values in the table below'"
       >
-        <path d="M20 30H680 M20 75H680 M20 120H680 M20 165H680" stroke="#e4e9ed" fill="none" />
+        <path
+          d="M20 30H680 M20 75H680 M20 120H680 M20 165H680"
+          stroke="var(--chart-grid)"
+          fill="none"
+        />
         <path
           [attr.d]="chart()"
           fill="none"
-          stroke="#257668"
+          stroke="var(--chart-line)"
           stroke-width="3"
           stroke-linejoin="round"
           stroke-linecap="round"
@@ -52,6 +62,8 @@
         ><span>Breaks indicate gaps in observation</span
         ><span>{{ history()[history().length - 1]?.at | date: 'd MMM' }}</span>
       </div>
+      }
+      <p class="donation-note">Current trophies are the API's ranked value. Zero is a reported value, not a missing measurement. Tournament resets can affect the change.</p>
       <p class="donation-note">
         Donation counter change:
         {{
@@ -80,7 +92,7 @@
                 </tr>
               } @empty {
                 <tr>
-                  <td colspan="3">No observations in this range.</td>
+                  <td colspan="3">No saved measurements.</td>
                 </tr>
               }
             </tbody>

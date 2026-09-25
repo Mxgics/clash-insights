@@ -27,6 +27,8 @@ public sealed class ClashClient(HttpClient http, IConfiguration config) {
                 var delay = response.Headers.RetryAfter?.Delta ?? (response.Headers.RetryAfter?.Date - DateTimeOffset.UtcNow) ?? TimeSpan.FromMinutes(5);
                 return new("Rate limited", RetryAfter: delay > TimeSpan.Zero ? delay : TimeSpan.FromMinutes(1));
             }
+            if (response.StatusCode == HttpStatusCode.Forbidden && route.EndsWith("/currentwar", StringComparison.Ordinal))
+                return new("War access denied: check war log visibility, key or IP");
             if (response.StatusCode is HttpStatusCode.Forbidden or HttpStatusCode.Unauthorized) return new("Access denied: check key, IP or data visibility");
             if (response.StatusCode == HttpStatusCode.NotFound) return new("Not found");
             if (!response.IsSuccessStatusCode) return new("Upstream unavailable");
