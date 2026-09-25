@@ -71,6 +71,17 @@ summary {
   line-height: 1.6;
   margin-top: 18px;
 }
+.history-empty {
+  margin: 24px 0;
+  padding: 28px 20px;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  background: var(--subtle);
+  line-height: 1.7;
+  color: var(--muted);
+}
+.history-empty strong { color: var(--text); }
+.history-empty p { margin: 8px 0 0; font-size: 12px; }
 @media (max-width: 700px) {
   .chart-foot {
     font-size: 9px;

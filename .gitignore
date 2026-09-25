@@ -5,6 +5,12 @@
 **/dist/
 **/wwwroot/
 .env
+.env.*
+!.env.example
+**/*.pfx
+**/*.p12
+**/*.key
+**/*.pem
 **/appsettings.Local.json
 backups/
 work/

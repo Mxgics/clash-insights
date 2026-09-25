@@ -1,6 +1,6 @@
 .shell {
   display: grid;
-  grid-template-columns: 224px 1fr;
+  grid-template-columns: 224px minmax(0, 1fr);
   min-height: 100vh;
 }
 .skip {
@@ -59,7 +59,7 @@ header {
   margin: 34px 0 22px;
 }
 h1 {
-  font-size: 32px;
+  font-size: 30px;
   letter-spacing: -1.2px;
   font-weight: 650;
   margin-bottom: 10px;
@@ -102,7 +102,7 @@ h1 {
 }
 .metrics {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 17px;
   margin-bottom: 24px;
 }
@@ -120,7 +120,7 @@ h1 {
 }
 .metrics strong {
   display: block;
-  font-size: 32px;
+  font-size: 30px;
   font-weight: 600;
   margin: 12px 0 6px;
 }
@@ -137,7 +137,7 @@ h1 {
 }
 .two-column {
   display: grid;
-  grid-template-columns: 1.45fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
   gap: 22px;
 }
 .count {
@@ -238,6 +238,9 @@ footer {
   padding: 3px 0 28px;
   line-height: 1.8;
 }
+footer a {
+  color: inherit;
+}
 
 @media (min-width: 1600px) {
   main {
@@ -249,13 +252,13 @@ footer {
     padding: 0 24px;
   }
   .shell {
-    grid-template-columns: 190px 1fr;
+    grid-template-columns: 190px minmax(0, 1fr);
   }
   .two-column {
     grid-template-columns: 1fr;
   }
   .metrics {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   h1 {
     font-size: 27px;
