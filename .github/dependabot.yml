@@ -5,6 +5,14 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    groups:
+      angular:
+        patterns:
+          - '@angular/*'
+    ignore:
+      - dependency-name: typescript
+        update-types:
+          - version-update:semver-major
   - package-ecosystem: nuget
     directories:
       - /src/ClashInsights.Api
@@ -12,6 +20,11 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    groups:
+      microsoft-ef:
+        patterns:
+          - 'Microsoft.AspNetCore.*'
+          - 'Microsoft.EntityFrameworkCore*'
   - package-ecosystem: github-actions
     directory: /
     schedule:
