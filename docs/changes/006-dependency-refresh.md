@@ -10,8 +10,8 @@ Change: pin Angular runtime, compiler, CLI, and build packages to 22.1.7; keep T
 
 Rationale: package families with exact peers should be reviewed and released together. The refresh command treats manifests as the intentional input, replaces stale lock peer entries, and then proves the result with ordinary locked installation. Vitest remains 4.1.11 because Angular build 22.1.7 declares `^4.0.8`; accepting Vitest 5 requires moving the Angular build line to 22.2 or later.
 
-Verification: frontend tests, production build, npm audit, both NuGet vulnerability audits, Compose configuration validation, lockfile inspection, and `git diff --check` passed. Exact results and the Docker limitation are recorded in `docs/test-plan.md`.
+Verification: frontend tests, production build, npm audit, both NuGet vulnerability audits, locked restores, Release build, the Demo isolation regression, Compose configuration validation, lockfile inspection, and `git diff --check` passed locally. GitHub Actions run 36236922561 then passed Backend, Web, Compose, Browser, and Secrets for commit `90914e2`. Exact results and the Docker limitation are recorded in `docs/test-plan.md`.
 
-Limits: the local Docker engine did not start because Docker Desktop 4.89.0 failed on runtime-socket rename. Database-backed tests, browser tests, Docker/Demo smoke, backup/restore, and migration listing against PostgreSQL remain pending until a working local engine or green branch CI supplies evidence. No dependency pull request is superseded until the combined branch passes required CI and is merged.
+Limits: the local Docker engine did not start because Docker Desktop 4.89.0 failed on runtime-socket rename. Branch CI supplies database-backed, browser, Compose, migration, and secret-scan evidence, but the production image/runtime Demo no-egress smoke and backup/restore still require a working Docker engine. No dependency pull request is superseded until the combined branch is merged.
 
 Recovery: revert this batch through a pull request, run `scripts/Refresh-Dependencies.ps1`, and rerun all locked release gates. Do not hand-edit hashes in any lockfile or bypass peer validation in CI.
