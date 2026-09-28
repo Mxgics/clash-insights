@@ -6,9 +6,14 @@ updates:
       interval: weekly
     open-pull-requests-limit: 5
     groups:
-      angular:
+      angular-testing:
         patterns:
           - '@angular/*'
+          - vitest
+      frontend-tooling:
+        patterns:
+          - jsdom
+          - prettier
     ignore:
       - dependency-name: typescript
         update-types:
@@ -25,6 +30,11 @@ updates:
         patterns:
           - 'Microsoft.AspNetCore.*'
           - 'Microsoft.EntityFrameworkCore*'
+      test-tooling:
+        patterns:
+          - coverlet.collector
+          - Microsoft.NET.Test.Sdk
+          - 'xunit*'
   - package-ecosystem: github-actions
     directory: /
     schedule:
