@@ -14,7 +14,9 @@ Repository admin access, a clean candidate checkout, .NET 10, Node 24.19+, Power
 
 ## Publish and maintain
 
-Use a `codex/` or feature branch, merge a passing pull request to `develop`, and promote it to `main` through another passing pull request. Preserve ancestry and synchronize `develop` after promotion. `main` is the public default branch. Required checks are Backend, Web, Browser, Compose and Secrets. Require pull requests and resolved conversations; block force pushes/deletion, with no mandatory external approval for the solo owner.
+Use a `codex/` or feature branch, merge a passing pull request to `develop`, and promote it to `main` through another passing pull request. Preserve ancestry and synchronize `develop` after promotion. `main` is the public default and release branch; `develop` is the integration branch. Required checks are Backend, Web, Browser, Compose and Secrets. Require pull requests and resolved conversations; block force pushes/deletion, with no mandatory external approval for the solo owner.
+
+Tag only completed milestones, not every promotion. After the promoted commit and its `main` checks pass, create an annotated SemVer tag that points to that exact `main` commit, push the tag, and publish a matching GitHub Release. The release notes must summarize changes, link the verification evidence, and state known limitations; a source release does not imply hosted deployment. The first planned tag is `v1.0.0` after every V1 acceptance gate passes. Never move or reuse a published tag; correct a defective release with a new patch version and the normal pull-request flow.
 
 Before changing visibility, inspect all existing repository discussions, pull requests, releases, Actions logs and artifacts for secrets or personal data. Enable available dependency alerts/security updates, private reporting and secret scanning/push protection; verify public-only settings immediately after publication. Keep Actions default permissions read-only and require approval for outside-contributor workflows. Do not pass live secrets to fork tests.
 
