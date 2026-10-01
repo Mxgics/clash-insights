@@ -23,6 +23,12 @@ The script creates an ignored random database password, installs locked dependen
 ./scripts/Test-Backup.ps1
 ```
 
+For operator-scheduled backups, provide an absolute destination. Each dump is restored into an isolated verification database before it becomes eligible for retention; only verified matching dumps are pruned:
+
+```powershell
+./scripts/Backup-Scheduled.ps1 -Destination 'D:\ClashInsightsBackups' -RetentionCount 14
+```
+
 Open `http://127.0.0.1:5188`. Frontend-only checks run from `web` (install Chromium once with `npx playwright install chromium`):
 
 ```powershell
