@@ -79,3 +79,10 @@ Publication completed on 2026-09-25 through passing pull requests into `develop`
 - Both projects restored in locked mode. The Release build completed with zero warnings and errors, and all 22 database-independent backend tests passed. Both NuGet vulnerability audits reported no vulnerable direct or transitive packages.
 - The full 29-test backend run stopped only at the PostgreSQL integration guard because the required isolated connection was not supplied. Docker-backed PostgreSQL, Playwright, Compose, and full-history secret scanning remain branch-CI gates for this batch; they are not inferred from the local checks.
 - GitHub Actions run 36448616797 for commit `ad17f9e` passed Backend, Web, Browser, Compose, and Secrets. This supplies the PostgreSQL integration, migration listing, Chromium journey/accessibility, Compose, and repository-history secret-scan evidence that was unavailable locally.
+
+## GitHub repository hardening — 2026-10-01
+
+- GitHub API inspection confirmed `main` as the default branch; strict required checks, resolved conversations, blocked force pushes/deletions, and administrator enforcement on both `main` and `develop`; read-only default Actions permissions; and enabled Dependabot security updates, secret scanning, and push protection.
+- Repository merge settings now permit merge commits only and automatically delete merged branches. Squash and rebase merges are disabled to preserve the documented branch ancestry.
+- CodeQL default setup is configured for C# and JavaScript/TypeScript with the default query suite, remote threat model, standard runner, and weekly schedule. Initial run 36829973670 completed successfully for both languages and the code-scanning API reported zero open alerts.
+- `Analyze (csharp)` and `Analyze (javascript-typescript)` are required on both protected branches in addition to Backend, Web, Browser, Compose, and Secrets. The evidence pull request must demonstrate that all seven checks report successfully before merge.
