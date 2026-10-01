@@ -10,7 +10,7 @@ Change: retain merge commits, disable squash and rebase merges, and automaticall
 
 Rationale: one merge strategy preserves feature and promotion ancestry. Default setup scans pushes and pull requests for the default and protected branches without adding a repository-owned workflow. Requiring the observed successful check names prevents changes from bypassing either language analysis.
 
-Verification: GitHub API reads confirmed the final repository, Actions, CodeQL, and branch-protection settings. Initial CodeQL run 36829973670 passed both language jobs and reported zero open alerts. Pull-request verification is recorded in `docs/test-plan.md`.
+Verification: GitHub API reads confirmed the final repository, Actions, CodeQL, and branch-protection settings. Initial CodeQL run 36829973670 passed both language jobs and reported zero open alerts. PR #38 then emitted and passed both required language contexts against protected `develop`, alongside all five existing CI checks. Exact run identifiers are recorded in `docs/test-plan.md`.
 
 Limits: CodeQL is static analysis, not a replacement for dependency audits, secret scanning, runtime security tests, or review. The default query suite and weekly schedule remain in use; changes to languages, runner, or query policy require another evidence-backed settings review.
 
