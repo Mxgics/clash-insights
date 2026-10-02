@@ -86,3 +86,12 @@ Publication completed on 2026-09-25 through passing pull requests into `develop`
 - Repository merge settings now permit merge commits only and automatically delete merged branches. Squash and rebase merges are disabled to preserve the documented branch ancestry.
 - CodeQL default setup is configured for C# and JavaScript/TypeScript with the default query suite, remote threat model, standard runner, and weekly schedule. Initial run 36829973670 completed successfully for both languages and the code-scanning API reported zero open alerts.
 - `Analyze (csharp)` and `Analyze (javascript-typescript)` are required on both protected branches in addition to Backend, Web, Browser, Compose, and Secrets. On PR #38, CI runs 36830388353 and 36830423248 passed the existing five jobs, while CodeQL run 36830420579 passed both required language analyses and its aggregate check. The pull request became cleanly mergeable with all seven required contexts satisfied.
+
+## Scheduled backup retention — 2026-10-01
+
+- Docker Desktop 29.7.2 was available again. The existing PostgreSQL 17 service started healthy without recreating its volume.
+- `Backup-Scheduled.ps1` rejected a relative destination and a zero retention count before backup work. Holding its per-destination lock caused an overlapping invocation to fail before dump creation. PowerShell parsed the script successfully and Compose configuration validation remained clean.
+- Three consecutive real backups were written to an ignored absolute test destination with `RetentionCount 2`. Every dump restored into a unique isolated database and matched the source values: 2,322 snapshots from `2026-08-23 21:10:54.043852+00` through `2026-09-19 13:51:34.89116+00`.
+- The third successful verification removed exactly the oldest matching verified dump. A fourth verified run after the concurrency guard was added again kept exactly two matching dumps, retained the non-prunable lock file, and left no `clash_restore_*` verification databases. No unverified or unrelated file was eligible for pruning.
+- The established regressions also passed with Docker available: `scripts/Test-Local.ps1` passed all 29 backend tests including isolated PostgreSQL integration, and `scripts/Test-Backup.ps1` restored a fresh dump and matched the same 2,322-snapshot count and time range.
+- Windows Task Scheduler instructions are documented but no task was created. The ignored test dumps are local verification artifacts, not an off-device backup.
